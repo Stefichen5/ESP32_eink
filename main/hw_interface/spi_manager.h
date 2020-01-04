@@ -11,7 +11,8 @@
 
 class spi_manager {
 public:
-	spi_manager();
+	spi_manager(gpio_num_t const mosi, gpio_num_t const sclk,
+			gpio_num_t const csel, spi_host_device_t const host_device);
 	~spi_manager();
 
 	/**
@@ -20,11 +21,12 @@ public:
 	 * @param length Length of data to transmit (bytes)
 	 * @return Transfer successful
 	 */
-	bool send(char * const data, __uint32_t const length);
+	bool send(__uint8_t const * const data, __uint32_t const length);
 private:
 	spi_device_handle_t spi;
-	spi_bus_config_t bus_cfg = {0};
-	spi_device_interface_config_t devcfg = {0};
+	spi_bus_config_t bus_cfg;
+	spi_device_interface_config_t devcfg;
+	gpio_num_t mosi, sclk, csel;
 };
 
 
