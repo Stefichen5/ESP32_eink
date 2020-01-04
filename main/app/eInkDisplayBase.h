@@ -15,6 +15,7 @@ public:
 	~eInkDisplayBase();
 
 	void send_command(__uint8_t const cmd);
+	void send_data(__uint8_t const data);
 	void send_data(__uint8_t const * const data, __uint8_t const len);
 	void wait_until_idle();
 	void send_cmd_1_argument(__uint8_t const cmd, __uint8_t const arg);
@@ -22,6 +23,8 @@ public:
 	void set_lut(__uint8_t const cmd, __uint8_t const len, __uint8_t * const lut);
 	//void set_lut_bw();//todo
 	void reset();
+
+	virtual void clear() = 0;
 
 private:
 	spi_manager * spi           = nullptr;

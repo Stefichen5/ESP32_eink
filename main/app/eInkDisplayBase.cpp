@@ -35,11 +35,13 @@ void eInkDisplayBase::setup_pins() {
 void eInkDisplayBase::send_command(__uint8_t const cmd) {
 	pin_dc->set_state(gpio_pin::off);
 	spi->send(&cmd, 1);
+	wait_until_idle();
 }
 
 void eInkDisplayBase::send_data(__uint8_t const * const data, __uint8_t const len) {
 	pin_dc->set_state(gpio_pin::on);
 	spi->send(data, len);
+	wait_until_idle();
 }
 
 void eInkDisplayBase::wait_until_idle() {
@@ -71,4 +73,8 @@ eInkDisplayBase::~eInkDisplayBase() {
 
 void eInkDisplayBase::send_cmd_1_argument(__uint8_t const cmd, __uint8_t const arg) {
 	send_cmd_n_arguments(cmd, &arg, 1);
+}
+
+void eInkDisplayBase::send_data(__uint8_t const data) {
+	send_data(&data, 1);
 }

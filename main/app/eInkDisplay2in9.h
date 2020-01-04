@@ -13,6 +13,12 @@ class eInkDisplay2in9 : eInkDisplayBase {
 public:
 	eInkDisplay2in9(spi_manager *const spiManager, gpio_pin *const pin_dc, gpio_pin *const pin_busy,
 	                gpio_pin *const pin_reset);
+
+	void set_window(__uint16_t const x_start, __uint16_t const y_start, __uint16_t x_end, __uint16_t y_end);
+	void set_cursor(__uint16_t const x_start, __uint16_t const y_start);
+	void turn_on_display();
+	void clear() override;
+	void fill(__uint8_t const value);
 };
 
 

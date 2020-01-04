@@ -1,9 +1,14 @@
-//
-// Created by stefan on 04.01.20.
-//
+/**
+ * @author Stefan Mayrhofer
+ * @date 04.01.2019
+ * @brief implementation of 2.9" display control, most parts ported directly from sample code by waveshare
+ */
 
 #ifndef IMPORT_CMAKE_LIB_CMD_EPD2IN7_H
 #define IMPORT_CMAKE_LIB_CMD_EPD2IN7_H
+
+#define PANEL_WIDTH 128
+#define PANEL_HEIGHT 296
 
 #define CMD_PANEL_SETTING                (__uint8_t) 0x00
 #define PANEL_SETTING_ARG                (__uint8_t) 0x8F
@@ -94,6 +99,13 @@ static __uint8_t const lut_full_mono[LUT_FULL_MONO_SIZE] =
 		0x35, 0x51, 0x51, 0x19, 0x01, 0x00
 };
 
+static __uint8_t lut_full_update[] = {
+		0x50, 0xAA, 0x55, 0xAA, 0x11, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0xFF, 0xFF, 0x1F, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
 
 
 

@@ -58,6 +58,5 @@ bool spi_manager::send(__uint8_t const * const data, __uint32_t const length) {
 	transaction.length = length*8;
 	transaction.tx_buffer = data;
 
-	std::cout << "sending " << transaction.length/8 << " bytes" << std::endl;
 	return (spi_device_polling_transmit(spi, &transaction) == ESP_OK);
 }

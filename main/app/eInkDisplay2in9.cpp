@@ -1,7 +1,3 @@
-//
-// Created by stefan on 04.01.20.
-//
-
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include "eInkDisplay2in9.h"
@@ -30,4 +26,57 @@ eInkDisplay2in9::eInkDisplay2in9(spi_manager *const spiManager, gpio_pin *const 
 
 	send_command(CMD_WRITE_RAM);
 	vTaskDelay(2000 / portTICK_PERIOD_MS);
+}
+
+void eInkDisplay2in9::clear() {
+	fill(0xFF);
+	fill(0x00);
+	fill(0xFF);
+}
+
+void eInkDisplay2in9::set_window(__uint16_t const x_start, __uint16_t const y_start, __uint16_t x_end, __uint16_t y_end) {
+	send_command(CMD_SET_RAM_X_ADDRESS);
+	send_data((x_start >> 3) & 0xFF);
+	send_data((x_end >> 3) & 0xFF);
+
+	send_command(CMD_SET_RAM_Y_ADDRESS);
+	send_data(y_start & 0xFF);
+	send_data((y_start >> 8) & 0xFF);
+
+	send_data(y_end & 0xFF);
+	send_data((y_end >> 8) & 0xFF);
+}
+
+void eInkDisplay2in9::set_cursor(__uint16_t const x_start, __uint16_t const y_start) {
+	send_command(CMD_SET_RAM_X_COUNTER);
+	send_data((x_start >> 3) & 0xFF);
+
+	send_command(CMD_SET_RAM_Y_COUNTER);
+	send_data(y_start & 0xFF);
+	send_data((y_start >> 8) & 0xFF);
+
+}
+
+void eInkDisplay2in9::turn_on_display() {
+	send_command(CMD_DISPLAY_UPDATE_CONTROL_2);
+	send_data(0xC4);
+	send_command(CMD_MASTER_ACTIVATION);
+	send_command(CMD_NOP);
+	wait_until_idle();
+}
+
+void eInkDisplay2in9::fill(__uint8_t const value) {
+	__uint16_t width = (PANEL_WIDTH % 8 == 0) ? (PANEL_WIDTH / 8): (PANEL_WIDTH / 8 + 1);
+	__uint16_t height = PANEL_HEIGHT;
+
+	set_window(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
+	for(__uint16_t y = 0; y < height; y++){
+		set_cursor(0, y);
+		send_command(CMD_WRITE_RAM);
+		for(__uint16_t x = 0; x < width; x++){
+			send_data(value);
+		}
+	}
+
+	turn_on_display();
 }
