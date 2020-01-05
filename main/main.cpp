@@ -1,5 +1,6 @@
 #include <iostream>
 #include <app/eInkDisplay2in9.h>
+#include <app/gui_paint.h>
 
 #include "app/eInkDisplayBase.h"
 
@@ -14,7 +15,15 @@ extern "C" void app_main(void)
 	spi_manager spi(GPIO_NUM_14, GPIO_NUM_13, GPIO_NUM_15, HSPI_HOST);
 
 	eInkDisplay2in9 display(&spi, &pin_dc, &pin_busy, &pin_rst);
-	display.clear();
+	std::cout << "clear display" << std::endl;
+	//display.clear();
 
+	std::cout << "start painting" << std::endl;
+	gui_paint paint(display.get_width(), display.get_height());
+	epd_image image(display.get_width(), display.get_height(), epd_image::e_rotate_0, WHITE);
+	paint.draw_string(&image, 0,0,"hello world", &Font12, BLACK, WHITE);
+
+	std::cout << "draw image" << std::endl;
+	display.draw_image(&image);
 	std::cout << "Done" << std::endl;
 }

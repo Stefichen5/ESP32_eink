@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <cstring>
 #include "epd_image.h"
 #include "gui_paint.h"
 
@@ -51,6 +52,7 @@ epd_image::epd_image(__uint16_t const width, __uint16_t const height, const epd_
                      __uint16_t const color) {
 
 	data = new __uint8_t[width*height];
+	std::memset(data, 0, width*height);
 
 	if(data == nullptr){
 		std::cerr << "could not allocate memory" << std::endl;
@@ -75,4 +77,30 @@ epd_image::epd_image(__uint16_t const width, __uint16_t const height, const epd_
 		this->width = height;
 		this->height = width;
 	}
+}
+
+__uint16_t epd_image::get_width() const {
+	return width;
+}
+
+__uint16_t epd_image::get_height() const {
+	return height;
+}
+
+void epd_image::set_mirroring(const epd_image::MIRROR_IMAGE mirror) {
+	this->mirror = mirror;
+}
+
+void epd_image::set_scale(__uint8_t const scale) {
+	if(scale == 2){
+		this->scale = scale;
+		width_byte = (width_memory % 8 == 0)? (width_memory / 8): (width_memory / 8 + 1);
+	} else if (scale == 4){
+		this->scale = scale;
+		width_byte = (width_memory % 4 == 0)? (width_memory / 4): (width_memory / 4 + 1);
+	}
+}
+
+void epd_image::set_rotate(const epd_image::e_rotate rotate) {
+	this->rotation = rotate;
 }

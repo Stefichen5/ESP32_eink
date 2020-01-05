@@ -5,11 +5,12 @@
 #include <iostream>
 #include "gui_paint.h"
 
-void gui_paint::draw_line(__uint16_t const x_pos, __uint16_t const y_pos, __uint16_t const x_end, __uint16_t const y_end,
-                     __uint16_t const color, const gui_paint::DOT_PIXEL line_width,
-                     const gui_paint::LINE_STYLE line_style) {
-	if (x_pos > display->get_width() || y_pos > display->get_height()
-		|| x_end > display->get_width() || y_end > display->get_height()){
+void gui_paint::draw_line(epd_image * const image,
+		__uint16_t const x_pos, __uint16_t const y_pos, __uint16_t const x_end, __uint16_t const y_end,
+        __uint16_t const color, const gui_paint::DOT_PIXEL line_width,
+        const gui_paint::LINE_STYLE line_style) {
+	if (x_pos > max_width || y_pos > max_height
+		|| x_end > max_width || y_end > max_height){
 		std::cerr << "coordinates out of bounds" << std::endl;
 		return;
 	}
@@ -33,10 +34,10 @@ void gui_paint::draw_line(__uint16_t const x_pos, __uint16_t const y_pos, __uint
 		//Painted dotted line, 2 point is really virtual
 		if (line_style == LINE_STYLE_DOTTED && Dotted_Len % 3 == 0) {
 			//Debug("LINE_DOTTED\r\n");
-			draw_point(Xpoint, Ypoint, IMAGE_BACKGROUND, line_width, DOT_STYLE_DFT);
+			draw_point(image, Xpoint, Ypoint, IMAGE_BACKGROUND, line_width, DOT_STYLE_DFT);
 			Dotted_Len = 0;
 		} else {
-			draw_point(Xpoint, Ypoint, color, line_width, DOT_STYLE_DFT);
+			draw_point(image, Xpoint, Ypoint, color, line_width, DOT_STYLE_DFT);
 		}
 		if (2 * Esp >= dy) {
 			if (Xpoint == x_end)
@@ -53,9 +54,10 @@ void gui_paint::draw_line(__uint16_t const x_pos, __uint16_t const y_pos, __uint
 	}
 }
 
-void gui_paint::draw_point(__uint16_t const x_pos, __uint16_t const y_pos, __uint16_t const color,
-                           const gui_paint::DOT_PIXEL pixel_size, const gui_paint::DOT_STYLE pixel_style) {
-	if (x_pos > display->get_width() || y_pos > display->get_width()){
+void gui_paint::draw_point(epd_image * const image,
+		__uint16_t const x_pos, __uint16_t const y_pos, __uint16_t const color,
+        const gui_paint::DOT_PIXEL pixel_size, const gui_paint::DOT_STYLE pixel_style) {
+	if (x_pos > max_width || y_pos > max_width){
 		std::cerr << "coordinates out of bounds" << std::endl;
 		return;
 	}
@@ -66,20 +68,21 @@ void gui_paint::draw_point(__uint16_t const x_pos, __uint16_t const y_pos, __uin
 			for (YDir_Num = 0; YDir_Num < 2 * pixel_size - 1; YDir_Num++) {
 				if(x_pos + XDir_Num - pixel_size < 0 || y_pos + YDir_Num - pixel_size < 0)
 					break;
-				set_pixel(x_pos + XDir_Num - pixel_size, y_pos + YDir_Num - pixel_size, color);
+				set_pixel(image,x_pos + XDir_Num - pixel_size, y_pos + YDir_Num - pixel_size, color);
 			}
 		}
 	} else {
 		for (XDir_Num = 0; XDir_Num <  pixel_size; XDir_Num++) {
 			for (YDir_Num = 0; YDir_Num <  pixel_size; YDir_Num++) {
-				set_pixel(x_pos + XDir_Num - 1, y_pos + YDir_Num - 1, color);
+				set_pixel(image, x_pos + XDir_Num - 1, y_pos + YDir_Num - 1, color);
 			}
 		}
 	}
 }
 
-void gui_paint::set_pixel(__uint16_t const x_pos, __uint16_t const y_pos, __uint16_t const color) {
-	if (x_pos > display->get_width() || y_pos > display->get_width()){
+void gui_paint::set_pixel(epd_image * const image,
+		__uint16_t const x_pos, __uint16_t const y_pos, __uint16_t const color) {
+	if (x_pos > max_width || y_pos > max_width){
 		std::cerr << "coordinates out of bounds" << std::endl;
 		return;
 	}
@@ -143,25 +146,28 @@ void gui_paint::set_pixel(__uint16_t const x_pos, __uint16_t const y_pos, __uint
 	}
 }
 
-void gui_paint::fill(__uint16_t const color) {
-	fill_window(0, 0, image->get_width_byte(), image->get_height_memory(), color);
+void gui_paint::fill(epd_image * const image,
+		__uint16_t const color) {
+	fill_window(image, 0, 0, image->get_width_byte(), image->get_height_memory(), color);
 }
 
-void gui_paint::fill_window(__uint16_t const x_pos, __uint16_t const y_pos, __uint16_t const x_end, __uint16_t const y_end,
-                       __uint16_t const color) {
+void gui_paint::fill_window(epd_image * const image,
+		__uint16_t const x_pos, __uint16_t const y_pos, __uint16_t const x_end, __uint16_t const y_end,
+        __uint16_t const color) {
 	__uint16_t x = 0, y = 0;
 
 	for (y = y_pos; y < y_end; y++){
 		for (x = x_pos; x < x_end; x++){
-			set_pixel(x, y, color);
+			set_pixel(image, x, y, color);
 		}
 	}
 }
 
-void gui_paint::draw_circle(__uint16_t const x_center, __uint16_t const y_center, __uint16_t const radius,
-                            __uint16_t const color, const gui_paint::DOT_PIXEL line_width,
-                            const gui_paint::DRAW_FILL draw_fill) {
-	if (x_center > display->get_width() || y_center > display->get_width()){
+void gui_paint::draw_circle(epd_image * const image,
+		__uint16_t const x_center, __uint16_t const y_center, __uint16_t const radius,
+        __uint16_t const color, const gui_paint::DOT_PIXEL line_width,
+        const gui_paint::DRAW_FILL draw_fill) {
+	if (x_center > max_width || y_center > max_width){
 		std::cerr << "coordinates out of bounds" << std::endl;
 		return;
 	}
@@ -178,14 +184,14 @@ void gui_paint::draw_circle(__uint16_t const x_center, __uint16_t const y_center
 	if (draw_fill == DRAW_FILL_FULL) {
 		while (XCurrent <= YCurrent ) { //Realistic circles
 			for (sCountY = XCurrent; sCountY <= YCurrent; sCountY ++ ) {
-				draw_point(x_center + XCurrent, y_center + sCountY, color, DOT_PIXEL_DFT, DOT_STYLE_DFT);//1
-				draw_point(x_center - XCurrent, y_center + sCountY, color, DOT_PIXEL_DFT, DOT_STYLE_DFT);//2
-				draw_point(x_center - sCountY, y_center + XCurrent, color, DOT_PIXEL_DFT, DOT_STYLE_DFT);//3
-				draw_point(x_center - sCountY, y_center - XCurrent, color, DOT_PIXEL_DFT, DOT_STYLE_DFT);//4
-				draw_point(x_center - XCurrent, y_center - sCountY, color, DOT_PIXEL_DFT, DOT_STYLE_DFT);//5
-				draw_point(x_center + XCurrent, y_center - sCountY, color, DOT_PIXEL_DFT, DOT_STYLE_DFT);//6
-				draw_point(x_center + sCountY, y_center - XCurrent, color, DOT_PIXEL_DFT, DOT_STYLE_DFT);//7
-				draw_point(x_center + sCountY, y_center + XCurrent, color, DOT_PIXEL_DFT, DOT_STYLE_DFT);
+				draw_point(image, x_center + XCurrent, y_center + sCountY, color, DOT_PIXEL_DFT, DOT_STYLE_DFT);//1
+				draw_point(image, x_center - XCurrent, y_center + sCountY, color, DOT_PIXEL_DFT, DOT_STYLE_DFT);//2
+				draw_point(image, x_center - sCountY, y_center + XCurrent, color, DOT_PIXEL_DFT, DOT_STYLE_DFT);//3
+				draw_point(image, x_center - sCountY, y_center - XCurrent, color, DOT_PIXEL_DFT, DOT_STYLE_DFT);//4
+				draw_point(image, x_center - XCurrent, y_center - sCountY, color, DOT_PIXEL_DFT, DOT_STYLE_DFT);//5
+				draw_point(image, x_center + XCurrent, y_center - sCountY, color, DOT_PIXEL_DFT, DOT_STYLE_DFT);//6
+				draw_point(image, x_center + sCountY, y_center - XCurrent, color, DOT_PIXEL_DFT, DOT_STYLE_DFT);//7
+				draw_point(image, x_center + sCountY, y_center + XCurrent, color, DOT_PIXEL_DFT, DOT_STYLE_DFT);
 			}
 			if (Esp < 0 )
 				Esp += 4 * XCurrent + 6;
@@ -197,14 +203,14 @@ void gui_paint::draw_circle(__uint16_t const x_center, __uint16_t const y_center
 		}
 	} else { //Draw a hollow circle
 		while (XCurrent <= YCurrent ) {
-			draw_point(x_center + XCurrent, y_center + YCurrent, color, line_width, DOT_STYLE_DFT);//1
-			draw_point(x_center - XCurrent, y_center + YCurrent, color, line_width, DOT_STYLE_DFT);//2
-			draw_point(x_center - YCurrent, y_center + XCurrent, color, line_width, DOT_STYLE_DFT);//3
-			draw_point(x_center - YCurrent, y_center - XCurrent, color, line_width, DOT_STYLE_DFT);//4
-			draw_point(x_center - XCurrent, y_center - YCurrent, color, line_width, DOT_STYLE_DFT);//5
-			draw_point(x_center + XCurrent, y_center - YCurrent, color, line_width, DOT_STYLE_DFT);//6
-			draw_point(x_center + YCurrent, y_center - XCurrent, color, line_width, DOT_STYLE_DFT);//7
-			draw_point(x_center + YCurrent, y_center + XCurrent, color, line_width, DOT_STYLE_DFT);//0
+			draw_point(image, x_center + XCurrent, y_center + YCurrent, color, line_width, DOT_STYLE_DFT);//1
+			draw_point(image, x_center - XCurrent, y_center + YCurrent, color, line_width, DOT_STYLE_DFT);//2
+			draw_point(image, x_center - YCurrent, y_center + XCurrent, color, line_width, DOT_STYLE_DFT);//3
+			draw_point(image, x_center - YCurrent, y_center - XCurrent, color, line_width, DOT_STYLE_DFT);//4
+			draw_point(image, x_center - XCurrent, y_center - YCurrent, color, line_width, DOT_STYLE_DFT);//5
+			draw_point(image, x_center + XCurrent, y_center - YCurrent, color, line_width, DOT_STYLE_DFT);//6
+			draw_point(image, x_center + YCurrent, y_center - XCurrent, color, line_width, DOT_STYLE_DFT);//7
+			draw_point(image, x_center + YCurrent, y_center + XCurrent, color, line_width, DOT_STYLE_DFT);//0
 
 			if (Esp < 0 )
 				Esp += 4 * XCurrent + 6;
@@ -217,10 +223,11 @@ void gui_paint::draw_circle(__uint16_t const x_center, __uint16_t const y_center
 	}
 }
 
-void gui_paint::draw_rectangle(__uint16_t const x_pos, __uint16_t const y_pos, __uint16_t const x_end,
-                               __uint16_t const y_end, __uint16_t const color, const gui_paint::DOT_PIXEL line_width,
-                               const gui_paint::DRAW_FILL draw_fill) {
-	if (x_pos > display->get_width() || y_pos > display->get_width()){
+void gui_paint::draw_rectangle(epd_image * const image,
+		__uint16_t const x_pos, __uint16_t const y_pos, __uint16_t const x_end,
+        __uint16_t const y_end, __uint16_t const color, const gui_paint::DOT_PIXEL line_width,
+        const gui_paint::DRAW_FILL draw_fill) {
+	if (x_pos > max_width || y_pos > max_width){
 		std::cerr << "coordinates out of bounds" << std::endl;
 		return;
 	}
@@ -228,31 +235,95 @@ void gui_paint::draw_rectangle(__uint16_t const x_pos, __uint16_t const y_pos, _
 	if (draw_fill) {
 		__uint16_t Ypoint;
 		for(Ypoint = y_pos; Ypoint < y_end; Ypoint++) {
-			draw_line(x_pos, Ypoint, x_end, Ypoint, color , line_width, LINE_STYLE_SOLID);
+			draw_line(image, x_pos, Ypoint, x_end, Ypoint, color , line_width, LINE_STYLE_SOLID);
 		}
 	} else {
-		draw_line(x_pos, y_pos, x_end, y_pos, color, line_width, LINE_STYLE_SOLID);
-		draw_line(x_pos, y_pos, x_pos, y_end, color, line_width, LINE_STYLE_SOLID);
-		draw_line(x_end, y_end, x_end, y_pos, color, line_width, LINE_STYLE_SOLID);
-		draw_line(x_end, y_end, x_pos, y_end, color, line_width, LINE_STYLE_SOLID);
+		draw_line(image, x_pos, y_pos, x_end, y_pos, color, line_width, LINE_STYLE_SOLID);
+		draw_line(image, x_pos, y_pos, x_pos, y_end, color, line_width, LINE_STYLE_SOLID);
+		draw_line(image, x_end, y_end, x_end, y_pos, color, line_width, LINE_STYLE_SOLID);
+		draw_line(image, x_end, y_end, x_pos, y_end, color, line_width, LINE_STYLE_SOLID);
 	}
 }
 
-gui_paint::~gui_paint() {
-	delete image;
+
+void gui_paint::draw_string(epd_image * const image,
+		__uint16_t const x_pos, __uint16_t const y_pos, std::string const text, sFONT *const font,
+        __uint16_t const color_foreground, __uint16_t const color_background) {
+	__uint16_t Xpoint = x_pos;
+	__uint16_t  Ypoint = y_pos;
+
+	if (x_pos > image->get_width() || y_pos > image->get_height()) {
+		std::cerr << "Paint_DrawString_EN Input exceeds the normal display range" << std::endl;
+		return;
+	}
+
+	auto text_c_str = text.c_str();
+	char const * pString = text_c_str;
+
+	while (* pString != '\0') {
+		//if X direction filled , reposition to(Xstart,Ypoint),Ypoint is Y direction plus the Height of the character
+		if ((Xpoint + font->Width ) > image->get_width() ) {
+			Xpoint = x_pos;
+			Ypoint += font->Height;
+		}
+
+		// If the Y direction is full, reposition to(Xstart, Ystart)
+		if ((Ypoint  + font->Height ) > image->get_height() ) {
+			Xpoint = x_pos;
+			Ypoint = y_pos;
+		}
+		draw_char(image, Xpoint, Ypoint, * pString, font, color_background, color_foreground);
+
+		//The next character of the address
+		pString ++;
+
+		//The next word of the abscissa increases the font of the broadband
+		Xpoint += font->Width;
+	}
 }
 
-gui_paint::gui_paint(eInkDisplayBase *const display) {
-	if(display == nullptr){
-		std::cerr << "display is nullptr" << std::endl;
+void gui_paint::draw_char(epd_image * const image,
+		__uint16_t const x_pos, __uint16_t const y_pos, char const ch, sFONT *const font,
+        __uint16_t const color_foreground, __uint16_t const color_background) {
+	__uint16_t Page = 0, Column = 0;
+
+	if (x_pos > image->get_width() || y_pos > image->get_height()) {
+		std::cerr << "Paint_DrawChar Input exceeds the normal display range" << std::endl;
 		return;
 	}
 
-	this->display = display;
+	uint32_t Char_Offset = (ch - ' ') * font->Height * (font->Width / 8 + (font->Width % 8 ? 1 : 0));
+	const unsigned char *ptr = &font->table[Char_Offset];
 
-	image = new epd_image(display->get_width(), display->get_height(), epd_image::e_rotate_0, BLACK);
-	if (image == nullptr){
-		std::cerr << "image is nullptr" << std::endl;
-		return;
+	for (Page = 0; Page < font->Height; Page ++ ) {
+		for (Column = 0; Column < font->Width; Column ++ ) {
+
+			//To determine whether the font background color and screen background color is consistent
+			if (FONT_BACKGROUND == color_background) { //this process is to speed up the scan
+				if (*ptr & (0x80 >> (Column % 8)))
+					set_pixel(image, x_pos + Column, y_pos + Page, color_foreground);
+				// Paint_DrawPoint(Xpoint + Column, Ypoint + Page, Color_Foreground, DOT_PIXEL_DFT, DOT_STYLE_DFT);
+			} else {
+				if (*ptr & (0x80 >> (Column % 8))) {
+					set_pixel(image, x_pos + Column, y_pos + Page, color_foreground);
+					// Paint_DrawPoint(Xpoint + Column, Ypoint + Page, Color_Foreground, DOT_PIXEL_DFT, DOT_STYLE_DFT);
+				} else {
+					set_pixel(image, x_pos + Column, y_pos + Page, color_background);
+					// Paint_DrawPoint(Xpoint + Column, Ypoint + Page, Color_Background, DOT_PIXEL_DFT, DOT_STYLE_DFT);
+				}
+			}
+			//One pixel is 8 bits
+			if (Column % 8 == 7){
+				ptr++;
+			}
+		}// Write a line
+		if (font->Width % 8 != 0){
+			ptr++;
+		}
 	}
+}
+
+gui_paint::gui_paint(__uint16_t const max_width, __uint16_t const max_height) {
+	this->max_height = max_height;
+	this->max_width = max_width;
 }

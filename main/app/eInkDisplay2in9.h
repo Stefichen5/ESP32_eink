@@ -9,7 +9,7 @@
 #include "eInkDisplayBase.h"
 #include "app/cmd_epd2in9.h"
 
-class eInkDisplay2in9 : eInkDisplayBase {
+class eInkDisplay2in9 : public eInkDisplayBase {
 public:
 	eInkDisplay2in9(spi_manager *const spiManager, gpio_pin *const pin_dc, gpio_pin *const pin_busy,
 	                gpio_pin *const pin_reset);
@@ -20,8 +20,10 @@ public:
 	void clear() override;
 	void fill(__uint8_t const value);
 
-	virtual __uint16_t get_width() const;
-	virtual __uint16_t get_height() const;
+	__uint16_t get_width() const override;
+	__uint16_t get_height() const override;
+
+	void draw_image(epd_image * const image) override;
 };
 
 

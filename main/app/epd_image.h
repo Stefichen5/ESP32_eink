@@ -36,9 +36,14 @@ public:
 	__uint16_t get_scale() const;
 	__uint16_t get_width_byte() const;
 	__uint32_t get_height_byte() const;
+	__uint16_t get_width() const;
+	__uint16_t get_height() const;
 	__uint8_t get_data(__uint32_t const addr) const;
 
 	void set_data(__uint32_t  const addr, __uint8_t const data);
+	void set_scale(__uint8_t const scale);
+	void set_mirroring(MIRROR_IMAGE const mirror);
+	void set_rotate(e_rotate const rotate);
 private:
 	e_rotate rotation = e_rotate_0;
 	__uint16_t width_memory = 0;

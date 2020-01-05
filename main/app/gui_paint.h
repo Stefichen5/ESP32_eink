@@ -9,11 +9,12 @@
 
 #include "eInkDisplayBase.h"
 #include "epd_image.h"
+#include "Fonts/fonts.h"
 
 class gui_paint {
 public:
-	gui_paint(eInkDisplayBase * const display);
-	~gui_paint();
+	gui_paint(__uint16_t const max_width, __uint16_t const max_height);
+	~gui_paint() = default;
 
 	/**
 	 * image color
@@ -63,31 +64,42 @@ public:
 		DRAW_FILL_FULL,
 	} DRAW_FILL;
 
-	void set_pixel(__uint16_t const x_pos, __uint16_t const y_pos, __uint16_t const color);
+	void set_pixel( epd_image * const image,
+			__uint16_t const x_pos, __uint16_t const y_pos, __uint16_t const color);
 
-	void draw_text(std::string const text,
+	void draw_char(epd_image * const image,
+			__uint16_t const x_pos, __uint16_t const y_pos, char const ch,
+			sFONT* const font, __uint16_t const color_foreground,
+			__uint16_t const color_background);
+	void draw_string(epd_image * const image,
 			__uint16_t const x_pos, __uint16_t const y_pos,
+	        std::string const text, sFONT * const font,
 			__uint16_t const color_foreground, __uint16_t const color_background);
 
-	void draw_point(__uint16_t const x_pos, __uint16_t const y_pos,
+	void draw_point(epd_image * const image,
+			__uint16_t const x_pos, __uint16_t const y_pos,
 			__uint16_t const color, DOT_PIXEL const pixel_size, DOT_STYLE const pixel_style);
-	void draw_line(__uint16_t const x_pos, __uint16_t const y_pos,
+	void draw_line(epd_image * const image,
+			__uint16_t const x_pos, __uint16_t const y_pos,
 			__uint16_t const x_end, __uint16_t const y_end,
 			__uint16_t const color, DOT_PIXEL const line_width, LINE_STYLE const line_style);
-	void draw_rectangle(__uint16_t const x_pos, __uint16_t const y_pos,
+	void draw_rectangle(epd_image * const image,
+			__uint16_t const x_pos, __uint16_t const y_pos,
 	                    __uint16_t const x_end, __uint16_t const y_end,
 	                    __uint16_t const color, DOT_PIXEL const line_width, DRAW_FILL const draw_fill);
-	void draw_circle(__uint16_t const x_center, __uint16_t const y_center,
+	void draw_circle(epd_image * const image,
+			__uint16_t const x_center, __uint16_t const y_center,
 						__uint16_t const radius, __uint16_t const color,
 						DOT_PIXEL const line_width, DRAW_FILL const draw_fill);
 
-	void fill(__uint16_t const color);
-	void fill_window(__uint16_t const x_pos, __uint16_t const y_pos,
-					__uint16_t const x_end, __uint16_t const y_end,
+	void fill(epd_image * const image, __uint16_t const color);
+	void fill_window(epd_image * const image,
+			__uint16_t const x_pos, __uint16_t const y_pos,
+			__uint16_t const x_end, __uint16_t const y_end,
 			__uint16_t const color);
 private:
-	eInkDisplayBase * display = nullptr;
-	epd_image * image = nullptr;
+	__uint16_t max_width = 0;
+	__uint16_t max_height = 0;
 };
 
 

@@ -88,3 +88,27 @@ __uint16_t eInkDisplay2in9::get_width() const {
 __uint16_t eInkDisplay2in9::get_height() const {
 	return PANEL_HEIGHT;
 }
+
+void eInkDisplay2in9::draw_image(epd_image *const image) {
+	if (image == nullptr){
+		return;
+	}
+
+	__uint16_t Width = 0, Height = 0;
+	Width = (PANEL_WIDTH % 8 == 0)? (PANEL_WIDTH / 8 ): (PANEL_WIDTH / 8 + 1);
+	Height = PANEL_HEIGHT;
+
+	__uint32_t Addr = 0;
+	// UDOUBLE Offset = ImageName;
+	set_window(0, 0, PANEL_WIDTH, PANEL_HEIGHT);
+	for (__uint16_t j = 0; j < Height; j++) {
+		set_cursor(0, j);
+		send_command(CMD_WRITE_RAM);
+		for (__uint16_t i = 0; i < Width; i++) {
+			Addr = i + j * Width;
+			send_data(image->get_data(Addr));
+		}
+	}
+	turn_on_display();
+
+}

@@ -4,7 +4,12 @@ set(COMPONENT_SRCS "main.cpp \
     app/gui_paint.cpp \
     app/epd_image \
     hw_interface/spi_manager.cpp \
-    hw_interface/gpio_pin.cpp")
+    hw_interface/gpio_pin.cpp \
+    app/Fonts/font8.c \
+    app/Fonts/font12.c \
+    app/Fonts/font16.c \
+    app/Fonts/font20.c \
+    app/Fonts/font24.c ")
 set(COMPONENT_ADD_INCLUDEDIRS ".")
 
 register_component()
