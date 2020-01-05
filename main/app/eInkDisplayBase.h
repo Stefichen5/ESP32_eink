@@ -25,6 +25,8 @@ public:
 	void reset();
 
 	virtual void clear() = 0;
+	virtual __uint16_t get_width() const = 0;
+	virtual __uint16_t get_height() const = 0;
 
 private:
 	spi_manager * spi           = nullptr;

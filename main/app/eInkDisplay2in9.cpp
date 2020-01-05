@@ -80,3 +80,11 @@ void eInkDisplay2in9::fill(__uint8_t const value) {
 
 	turn_on_display();
 }
+
+__uint16_t eInkDisplay2in9::get_width() const {
+	return PANEL_WIDTH;
+}
+
+__uint16_t eInkDisplay2in9::get_height() const {
+	return PANEL_HEIGHT;
+}

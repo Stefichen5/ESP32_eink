@@ -19,6 +19,9 @@ public:
 	void turn_on_display();
 	void clear() override;
 	void fill(__uint8_t const value);
+
+	virtual __uint16_t get_width() const;
+	virtual __uint16_t get_height() const;
 };
 
 
