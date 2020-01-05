@@ -5,6 +5,11 @@
 #include <iostream>
 #include "gui_paint.h"
 
+gui_paint::gui_paint(__uint16_t const max_width, __uint16_t const max_height) {
+	this->max_height = max_height;
+	this->max_width = max_width;
+}
+
 void gui_paint::draw_line(epd_image * const image,
 		__uint16_t const x_pos, __uint16_t const y_pos, __uint16_t const x_end, __uint16_t const y_end,
         __uint16_t const color, const gui_paint::DOT_PIXEL line_width,
@@ -321,9 +326,4 @@ void gui_paint::draw_char(epd_image * const image,
 			ptr++;
 		}
 	}
-}
-
-gui_paint::gui_paint(__uint16_t const max_width, __uint16_t const max_height) {
-	this->max_height = max_height;
-	this->max_width = max_width;
 }

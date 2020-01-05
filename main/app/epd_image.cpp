@@ -36,12 +36,20 @@ __uint32_t epd_image::get_height_byte() const {
 }
 
 __uint8_t epd_image::get_data(__uint32_t const addr) const {
-	//todo: implement
-	return 0;
+	if(addr >= width * height){
+		std::cerr << "read out of bounds" << std::endl;
+		return 0;
+	}
+
+	return data[addr];
 }
 
 void epd_image::set_data(__uint32_t const addr, __uint8_t const data) {
-
+	if(addr >= width * height){
+		std::cerr << "write out of bounds" << std::endl;
+		return;
+	}
+	this->data[addr] = data;
 }
 
 epd_image::~epd_image() {

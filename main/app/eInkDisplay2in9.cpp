@@ -1,5 +1,6 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
+#include <iostream>
 #include "eInkDisplay2in9.h"
 
 eInkDisplay2in9::eInkDisplay2in9(spi_manager *const spiManager, gpio_pin *const pin_dc, gpio_pin *const pin_busy,
