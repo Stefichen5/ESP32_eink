@@ -20,10 +20,13 @@ extern "C" void app_main(void)
 
 	std::cout << "start painting" << std::endl;
 	gui_paint paint(display.get_width(), display.get_height());
-	epd_image image(display.get_width(), display.get_height(), epd_image::e_rotate_0, WHITE);
-	paint.draw_string(&image, 0,0,"hello world", &Font12, BLACK, WHITE);
+	epd_image image(display.get_height(), display.get_width(), epd_image::e_rotate_0, WHITE);
+	//paint.draw_string(&image, 0,0,"hello world", &Font12, BLACK, WHITE);
+	paint.fill(&image, WHITE);
+	paint.draw_circle(&image, 50, 50, 20, BLACK, gui_paint::DOT_PIXEL_8X8, gui_paint::DRAW_FILL_FULL);
 
 	std::cout << "draw image" << std::endl;
+	display.draw_image(&image);
 	display.draw_image(&image);
 	std::cout << "Done" << std::endl;
 }

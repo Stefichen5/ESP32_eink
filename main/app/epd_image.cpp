@@ -77,6 +77,8 @@ epd_image::epd_image(__uint16_t const width, __uint16_t const height, const epd_
 		this->width = height;
 		this->height = width;
 	}
+
+	fprintf(stdout, "initialized image with: width: %i, height %i \n", this->width, this->height);
 }
 
 __uint16_t epd_image::get_width() const {
