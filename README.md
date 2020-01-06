@@ -2,6 +2,8 @@
 
 This is my slightly modified version of the waveshare eInk library for the esp32.
 
+This is **not** meant to be an arduino project. It's for the IDF platform.
+
 ## My take on the project
 
 Waveshare provides a good sample code. I copied a big portion of what they provide and slightly modified it to use some of the benefits of C++ (mainly classes/objects).
