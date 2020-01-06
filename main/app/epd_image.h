@@ -40,22 +40,24 @@ public:
 	__uint16_t get_height() const;
 	__uint8_t get_data(__uint32_t const addr) const;
 
-	void set_data(__uint32_t  const addr, __uint8_t const data);
+	void set_data(__uint32_t  const addr, __uint8_t const new_data);
 	void set_scale(__uint8_t const scale);
 	void set_mirroring(MIRROR_IMAGE const mirror);
 	void set_rotate(e_rotate const rotate);
 private:
-	e_rotate rotation = e_rotate_0;
-	__uint16_t width_memory = 0;
-	__uint16_t height_memory = 0;
-	MIRROR_IMAGE mirror = MIRROR_IMAGE_DFT;
-	__uint16_t scale = 2;
-	__uint16_t width_byte = 0;
-	__uint16_t height_byte = 0;
-	__uint16_t color = 0;
 	__uint8_t * data = nullptr;
 	__uint16_t width = 0;
 	__uint16_t height = 0;
+	__uint16_t width_memory = 0;
+	__uint16_t height_memory = 0;
+	__uint16_t color = 0;
+	e_rotate rotation = e_rotate_0;
+	MIRROR_IMAGE mirror = MIRROR_IMAGE_DFT;
+	__uint16_t width_byte = 0;
+	__uint16_t height_byte = 0;
+	__uint16_t scale = 2;
+
+	__uint32_t array_size = 0;
 };
 
 

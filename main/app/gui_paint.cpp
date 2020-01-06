@@ -62,7 +62,7 @@ void gui_paint::draw_line(epd_image * const image,
 void gui_paint::draw_point(epd_image * const image,
 		__uint16_t const x_pos, __uint16_t const y_pos, __uint16_t const color,
         const gui_paint::DOT_PIXEL pixel_size, const gui_paint::DOT_STYLE pixel_style) {
-	if (x_pos > max_width || y_pos > max_width){
+	if (x_pos > image->get_width() || y_pos > image->get_height()){
 		std::cerr << "coordinates out of bounds" << std::endl;
 		return;
 	}
@@ -71,8 +71,9 @@ void gui_paint::draw_point(epd_image * const image,
 	if (pixel_style == DOT_FILL_AROUND) {
 		for (XDir_Num = 0; XDir_Num < 2 * pixel_size - 1; XDir_Num++) {
 			for (YDir_Num = 0; YDir_Num < 2 * pixel_size - 1; YDir_Num++) {
-				if(x_pos + XDir_Num - pixel_size < 0 || y_pos + YDir_Num - pixel_size < 0)
+				if(x_pos + XDir_Num - pixel_size < 0 || y_pos + YDir_Num - pixel_size < 0){
 					break;
+				}
 				set_pixel(image,x_pos + XDir_Num - pixel_size, y_pos + YDir_Num - pixel_size, color);
 			}
 		}
@@ -87,10 +88,12 @@ void gui_paint::draw_point(epd_image * const image,
 
 void gui_paint::set_pixel(epd_image * const image,
 		__uint16_t const x_pos, __uint16_t const y_pos, __uint16_t const color) {
-	if (x_pos > max_width || y_pos > max_width){
+	if (x_pos >= image->get_width() || y_pos >= image->get_height()){
 		std::cerr << "coordinates out of bounds" << std::endl;
 		return;
 	}
+
+	//fprintf(stdout, "setting pixel x: %i, y: %i\n", x_pos, y_pos);
 
 	__uint16_t x = 0, y = 0;
 	switch (image->get_rotation()){
@@ -103,8 +106,8 @@ void gui_paint::set_pixel(epd_image * const image,
 			y = x_pos;
 			break;
 		case epd_image::e_rotate_180:
-			x = image->get_width_memory();
-			y = image->get_height_memory();
+			x = image->get_width_memory() - x_pos - 1;
+			y = image->get_height_memory() - y_pos - 1;
 			break;
 		case epd_image::e_rotate_270:
 			x = y_pos;
@@ -125,10 +128,12 @@ void gui_paint::set_pixel(epd_image * const image,
 			x = image->get_width_memory() - x - 1;
 			y = image->get_height_memory() - y - 1;
 			break;
+		default:
+			return;
 	}
 
-	if (x > image->get_width_memory() || y > image->get_height_memory()){
-		std::cerr << "coordinates out of bounds" << std::endl;
+	if (x >= image->get_width_memory() || y >= image->get_height_memory()){
+		fprintf(stderr, "coordinates x: %i, y: %i out of bounds", x, y);
 		return;
 	}
 
@@ -153,16 +158,22 @@ void gui_paint::set_pixel(epd_image * const image,
 
 void gui_paint::fill(epd_image * const image,
 		__uint16_t const color) {
-	fill_window(image, 0, 0, image->get_width_byte(), image->get_height_memory(), color);
+	fill_window(image, 0, 0, image->get_width()-1, image->get_height()-1, color);
 }
 
 void gui_paint::fill_window(epd_image * const image,
 		__uint16_t const x_pos, __uint16_t const y_pos, __uint16_t const x_end, __uint16_t const y_end,
         __uint16_t const color) {
-	__uint16_t x = 0, y = 0;
 
-	for (y = y_pos; y < y_end; y++){
-		for (x = x_pos; x < x_end; x++){
+	fprintf(stdout, "fill until x: %i, y: %i\n", x_end, y_end);
+
+	if(x_pos >= image->get_width() || x_end >= image->get_width()
+		|| y_pos >= image->get_height() || y_end >= image->get_height()){
+		return;
+	}
+
+	for (__uint16_t y = y_pos; y < y_end; y++){
+		for (__uint16_t x = x_pos; x < x_end; x++){
 			set_pixel(image, x, y, color);
 		}
 	}
