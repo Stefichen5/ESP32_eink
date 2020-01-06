@@ -1,7 +1,3 @@
-//
-// Created by stefan on 05.01.20.
-//
-
 #include <iostream>
 #include "gui_paint.h"
 
@@ -288,7 +284,7 @@ void gui_paint::draw_string(epd_image * const image,
 			Xpoint = x_pos;
 			Ypoint = y_pos;
 		}
-		draw_char(image, Xpoint, Ypoint, * pString, font, color_background, color_foreground);
+		draw_char(image, Xpoint, Ypoint, * pString, font, color_foreground, color_background);
 
 		//The next character of the address
 		pString ++;
