@@ -1,17 +1,12 @@
 #include <iostream>
 #include "gui_paint.h"
 
-gui_paint::gui_paint(__uint16_t const max_width, __uint16_t const max_height) {
-	this->max_height = max_height;
-	this->max_width = max_width;
-}
-
 void gui_paint::draw_line(epd_image * const image,
 		__uint16_t const x_pos, __uint16_t const y_pos, __uint16_t const x_end, __uint16_t const y_end,
         __uint16_t const color, const gui_paint::DOT_PIXEL line_width,
         const gui_paint::LINE_STYLE line_style) {
-	if (x_pos > max_width || y_pos > max_height
-		|| x_end > max_width || y_end > max_height){
+	if (x_pos > image->get_width() || y_pos > image->get_height()
+		|| x_end > image->get_width() || y_end > image->get_height()){
 		std::cerr << "coordinates out of bounds" << std::endl;
 		return;
 	}
@@ -58,7 +53,7 @@ void gui_paint::draw_line(epd_image * const image,
 void gui_paint::draw_point(epd_image * const image,
 		__uint16_t const x_pos, __uint16_t const y_pos, __uint16_t const color,
         const gui_paint::DOT_PIXEL pixel_size, const gui_paint::DOT_STYLE pixel_style) {
-	if (x_pos > image->get_width() || y_pos > image->get_height()){
+	if (x_pos >= image->get_width() || y_pos >= image->get_height()){
 		std::cerr << "coordinates out of bounds" << std::endl;
 		return;
 	}
@@ -179,7 +174,7 @@ void gui_paint::draw_circle(epd_image * const image,
 		__uint16_t const x_center, __uint16_t const y_center, __uint16_t const radius,
         __uint16_t const color, const gui_paint::DOT_PIXEL line_width,
         const gui_paint::DRAW_FILL draw_fill) {
-	if (x_center > max_width || y_center > max_width){
+	if (x_center > image->get_width() || y_center > image->get_height()){
 		std::cerr << "coordinates out of bounds" << std::endl;
 		return;
 	}
@@ -239,7 +234,7 @@ void gui_paint::draw_rectangle(epd_image * const image,
 		__uint16_t const x_pos, __uint16_t const y_pos, __uint16_t const x_end,
         __uint16_t const y_end, __uint16_t const color, const gui_paint::DOT_PIXEL line_width,
         const gui_paint::DRAW_FILL draw_fill) {
-	if (x_pos > max_width || y_pos > max_width){
+	if (x_pos > image->get_width() || y_pos > image->get_height()){
 		std::cerr << "coordinates out of bounds" << std::endl;
 		return;
 	}

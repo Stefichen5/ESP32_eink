@@ -36,7 +36,7 @@
 
 class gui_paint {
 public:
-	gui_paint(__uint16_t const max_width, __uint16_t const max_height);
+	gui_paint() = default;
 	~gui_paint() = default;
 
 	/**
@@ -121,8 +121,6 @@ public:
 			__uint16_t const x_end, __uint16_t const y_end,
 			__uint16_t const color);
 private:
-	__uint16_t max_width = 0;
-	__uint16_t max_height = 0;
 };
 
 
