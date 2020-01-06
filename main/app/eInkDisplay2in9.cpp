@@ -5,37 +5,20 @@
 
 eInkDisplay2in9::eInkDisplay2in9(spi_manager *const spiManager, gpio_pin *const pin_dc, gpio_pin *const pin_busy,
                                  gpio_pin *const pin_reset) : eInkDisplayBase(spiManager, pin_dc, pin_busy, pin_reset) {
-	reset();
-	send_cmd_n_arguments(CMD_DRIVER_OUTPUT_CONTROL, driver_output_control_arg, DRIVER_OUTPUT_CONTROL_NR_OF_ARGS);
-	send_cmd_n_arguments(CMD_BOOSTER_SOFT_START_CONTROL, booster_soft_start_control_arg, BOOSTER_SOFT_START_CONTROL_NR_OF_ARGS);
-	send_cmd_1_argument(CMD_WRITE_VCOM, WRITE_VCOM_ARG);
-	send_cmd_1_argument(CMD_SET_DUMMY_LINE_PERIOD, SET_DUMMY_LINE_PERIOD_ARG);
-	send_cmd_1_argument(CMD_SET_GATE_LINE_WIDTH, SET_GATE_LINE_WIDTH_ARG);
-	send_cmd_1_argument(CMD_DATA_ENTRY_MODE_SETTING, e_data_entry_inc_Y_inc_X);
-
-	__uint8_t ram_x_arg[] = {0, 15};
-	send_cmd_n_arguments(CMD_SET_RAM_X_ADDRESS, ram_x_arg, 2);
-	__uint8_t ram_y_arg[] = {0, 0, 45, 1};
-	send_cmd_n_arguments(CMD_SET_RAM_Y_ADDRESS, ram_y_arg, 4);
-
-	send_cmd_1_argument(CMD_SET_RAM_X_COUNTER, 0);
-	ram_y_arg[0] = 0;
-	ram_y_arg[1] = 0;
-	send_cmd_n_arguments(CMD_SET_RAM_Y_COUNTER, ram_y_arg, 2);
-
-	set_lut(CMD_WRITE_LUT, LUT_FULL_MONO_SIZE, (__uint8_t *)lut_full_mono);
-
-	send_command(CMD_WRITE_RAM);
-	vTaskDelay(2000 / portTICK_PERIOD_MS);
+	initialize();
 }
 
 void eInkDisplay2in9::clear() {
+	if (!initialized){initialize();}
+
 	fill(0xFF);
 	fill(0x00);
 	fill(0xFF);
 }
 
 void eInkDisplay2in9::set_window(__uint16_t const x_start, __uint16_t const y_start, __uint16_t x_end, __uint16_t y_end) {
+	if (!initialized){initialize();}
+
 	send_command(CMD_SET_RAM_X_ADDRESS);
 	send_data((x_start >> 3) & 0xFF);
 	send_data((x_end >> 3) & 0xFF);
@@ -49,6 +32,8 @@ void eInkDisplay2in9::set_window(__uint16_t const x_start, __uint16_t const y_st
 }
 
 void eInkDisplay2in9::set_cursor(__uint16_t const x_start, __uint16_t const y_start) {
+	if (!initialized){initialize();}
+
 	send_command(CMD_SET_RAM_X_COUNTER);
 	send_data((x_start >> 3) & 0xFF);
 
@@ -59,6 +44,8 @@ void eInkDisplay2in9::set_cursor(__uint16_t const x_start, __uint16_t const y_st
 }
 
 void eInkDisplay2in9::turn_on_display() {
+	if (!initialized){initialize();}
+
 	send_command(CMD_DISPLAY_UPDATE_CONTROL_2);
 	send_data(0xC4);
 	send_command(CMD_MASTER_ACTIVATION);
@@ -67,6 +54,8 @@ void eInkDisplay2in9::turn_on_display() {
 }
 
 void eInkDisplay2in9::fill(__uint8_t const value) {
+	if (!initialized){initialize();}
+
 	__uint16_t width = (PANEL_WIDTH % 8 == 0) ? (PANEL_WIDTH / 8): (PANEL_WIDTH / 8 + 1);
 	__uint16_t height = PANEL_HEIGHT;
 
@@ -95,6 +84,8 @@ void eInkDisplay2in9::draw_image(epd_image *const image) {
 		return;
 	}
 
+	if (!initialized){initialize();}
+
 	__uint16_t Width = 0, Height = 0;
 	Width = (PANEL_WIDTH % 8 == 0)? (PANEL_WIDTH / 8 ): (PANEL_WIDTH / 8 + 1);
 	Height = PANEL_HEIGHT;
@@ -112,4 +103,37 @@ void eInkDisplay2in9::draw_image(epd_image *const image) {
 	}
 	turn_on_display();
 
+}
+
+void eInkDisplay2in9::initialize() {
+	reset();
+	send_cmd_n_arguments(CMD_DRIVER_OUTPUT_CONTROL, driver_output_control_arg, DRIVER_OUTPUT_CONTROL_NR_OF_ARGS);
+	send_cmd_n_arguments(CMD_BOOSTER_SOFT_START_CONTROL, booster_soft_start_control_arg, BOOSTER_SOFT_START_CONTROL_NR_OF_ARGS);
+	send_cmd_1_argument(CMD_WRITE_VCOM, WRITE_VCOM_ARG);
+	send_cmd_1_argument(CMD_SET_DUMMY_LINE_PERIOD, SET_DUMMY_LINE_PERIOD_ARG);
+	send_cmd_1_argument(CMD_SET_GATE_LINE_WIDTH, SET_GATE_LINE_WIDTH_ARG);
+	send_cmd_1_argument(CMD_DATA_ENTRY_MODE_SETTING, e_data_entry_inc_Y_inc_X);
+
+	__uint8_t ram_x_arg[] = {0, 15};
+	send_cmd_n_arguments(CMD_SET_RAM_X_ADDRESS, ram_x_arg, 2);
+	__uint8_t ram_y_arg[] = {0, 0, 45, 1};
+	send_cmd_n_arguments(CMD_SET_RAM_Y_ADDRESS, ram_y_arg, 4);
+
+	send_cmd_1_argument(CMD_SET_RAM_X_COUNTER, 0);
+	ram_y_arg[0] = 0;
+	ram_y_arg[1] = 0;
+	send_cmd_n_arguments(CMD_SET_RAM_Y_COUNTER, ram_y_arg, 2);
+
+	set_lut(CMD_WRITE_LUT, LUT_FULL_MONO_SIZE, (__uint8_t *)lut_full_mono);
+
+	send_command(CMD_WRITE_RAM);
+
+	vTaskDelay(2000 / portTICK_PERIOD_MS);
+
+	initialized = true;
+}
+
+void eInkDisplay2in9::activate_deep_sleep() {
+	send_cmd_1_argument(CMD_DEEP_SLEEP_MODE, CMD_DEEP_SLEEP_MODE);
+	initialized = false;
 }

@@ -35,5 +35,11 @@ extern "C" void app_main(void)
 	std::cout << "draw image" << std::endl;
 	//display.draw_image(&image);
 	display.draw_image(&image);
+
+	display.activate_deep_sleep();
+	paint.draw_circle(&image, 50, 50, 20, BLACK, gui_paint::DOT_PIXEL_8X8, gui_paint::DRAW_FILL_FULL);
+	display.draw_image(&image);
+	display.activate_deep_sleep();
+
 	std::cout << "Done" << std::endl;
 }

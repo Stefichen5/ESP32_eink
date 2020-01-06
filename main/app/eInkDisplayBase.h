@@ -29,6 +29,7 @@ public:
 	virtual __uint16_t get_width() const = 0;
 	virtual __uint16_t get_height() const = 0;
 	virtual void draw_image(epd_image * const image) = 0;
+	virtual void activate_deep_sleep() = 0;
 
 private:
 	spi_manager * spi           = nullptr;
@@ -37,6 +38,11 @@ private:
 	gpio_pin * pin_reset        = nullptr;
 
 	void setup_pins();
+
+protected:
+	bool initialized            = false;
+
+	virtual void initialize()   = 0;
 };
 
 

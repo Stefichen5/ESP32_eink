@@ -24,6 +24,13 @@ public:
 	__uint16_t get_height() const override;
 
 	void draw_image(epd_image * const image) override;
+
+	void activate_deep_sleep() override ;
+protected:
+	/**
+	 * @brief initialize display after power on/deep sleep
+	 */
+	void initialize() override;
 };
 
 
