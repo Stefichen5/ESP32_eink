@@ -87,36 +87,36 @@ public:
 		DRAW_FILL_FULL,
 	} DRAW_FILL;
 
-	void set_pixel( epd_image * const image,
+	static void set_pixel( epd_image * const image,
 			__uint16_t const x_pos, __uint16_t const y_pos, __uint16_t const color);
 
-	void draw_char(epd_image * const image,
+	static void draw_char(epd_image * const image,
 			__uint16_t const x_pos, __uint16_t const y_pos, char const ch,
 			sFONT* const font, __uint16_t const color_foreground,
 			__uint16_t const color_background);
-	void draw_string(epd_image * const image,
+	static void draw_string(epd_image * const image,
 			__uint16_t const x_pos, __uint16_t const y_pos,
 	        std::string const text, sFONT * const font,
 			__uint16_t const color_foreground, __uint16_t const color_background);
 
-	void draw_point(epd_image * const image,
+	static void draw_point(epd_image * const image,
 			__uint16_t const x_pos, __uint16_t const y_pos,
 			__uint16_t const color, DOT_PIXEL const pixel_size, DOT_STYLE const pixel_style);
-	void draw_line(epd_image * const image,
+	static void draw_line(epd_image * const image,
 			__uint16_t const x_pos, __uint16_t const y_pos,
 			__uint16_t const x_end, __uint16_t const y_end,
 			__uint16_t const color, DOT_PIXEL const line_width, LINE_STYLE const line_style);
-	void draw_rectangle(epd_image * const image,
+	static void draw_rectangle(epd_image * const image,
 			__uint16_t const x_pos, __uint16_t const y_pos,
 	                    __uint16_t const x_end, __uint16_t const y_end,
 	                    __uint16_t const color, DOT_PIXEL const line_width, DRAW_FILL const draw_fill);
-	void draw_circle(epd_image * const image,
+	static void draw_circle(epd_image * const image,
 			__uint16_t const x_center, __uint16_t const y_center,
 						__uint16_t const radius, __uint16_t const color,
 						DOT_PIXEL const line_width, DRAW_FILL const draw_fill);
 
-	void fill(epd_image * const image, __uint16_t const color);
-	void fill_window(epd_image * const image,
+	static void fill(epd_image * const image, __uint16_t const color);
+	static void fill_window(epd_image * const image,
 			__uint16_t const x_pos, __uint16_t const y_pos,
 			__uint16_t const x_end, __uint16_t const y_end,
 			__uint16_t const color);
